@@ -1,0 +1,331 @@
+{
+	"info": {
+		"_postman_id": "32f91bbf-be72-424b-8063-ff0201e2a1c8",
+		"name": "Public SOAP APIs by Max DZ18",
+		"description": "This is a collection of different SOAP APIs that are completley public and do not require any authentication, making it easier for consumers to play with and understand what APIs are all about by seeing the many different ways in which APIs can be used.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12771448",
+		"_collection_link": "https://planetary-astronaut-88715.postman.co/workspace/Hillel-homeworks~5b6a9ed1-c4c4-4d55-b571-9efea4bc5286/collection/12771448-32f91bbf-be72-424b-8063-ff0201e2a1c8?action=share&source=collection_link&creator=12771448"
+	},
+	"item": [
+		{
+			"name": "Book ISBN Numbers",
+			"item": [
+				{
+					"name": "Is Valid ISBN13 Number",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseBody = pm.response.text();\r",
+									"var parseXml = require('xml2js').parseString;\r",
+									"\r",
+									"// Test if status code is 200\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Test if Content-Type header is correct\r",
+									"pm.test(\"Check that header is text/xml; charset=utf-8\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"text/xml; charset=utf-8\");\r",
+									"});\r",
+									"\r",
+									"// Test if XML declaration exists\r",
+									"pm.test(\"Check XML declaration\", function () {\r",
+									"    pm.expect(responseBody).to.match(/^<\\?xml version=\"1\\.0\" encoding=\"utf-8\"\\?>/);\r",
+									"});\r",
+									"\r",
+									"// Parse XML response\r",
+									"parseXml(responseBody, { ignoreAttrs: true, explicitArray: false }, function (err, result) {\r",
+									"    pm.expect(err).to.be.null;\r",
+									"\r",
+									"    // Test if SOAP envelope exists\r",
+									"    pm.test(\"SOAP envelope exists\", function () {\r",
+									"        pm.expect(result).to.have.property(\"soap:Envelope\");\r",
+									"    });\r",
+									"\r",
+									"    // Test if SOAP body exists\r",
+									"    pm.test(\"SOAP body exists\", function () {\r",
+									"        pm.expect(result[\"soap:Envelope\"]).to.have.property(\"soap:Body\");\r",
+									"    });\r",
+									"\r",
+									"    // Test if IsValidISBN13Response exists\r",
+									"    pm.test(\"m:IsValidISBN13Response exists\", function () {\r",
+									"        pm.expect(result[\"soap:Envelope\"][\"soap:Body\"]).to.have.property(\"m:IsValidISBN13Response\");\r",
+									"    });\r",
+									"\r",
+									"    // Test if IsValidISBN13Result exists\r",
+									"    pm.test(\"m:IsValidISBN13Result exists\", function () {\r",
+									"        pm.expect(result[\"soap:Envelope\"][\"soap:Body\"][\"m:IsValidISBN13Response\"]).to.have.property(\"m:IsValidISBN13Result\");\r",
+									"    });\r",
+									"\r",
+									"    // Test if IsValidISBN13Result equals \"true\"\r",
+									"    pm.test(\"m:IsValidISBN13Result equals 'true'\", function () {\r",
+									"        var resultValue = result[\"soap:Envelope\"][\"soap:Body\"][\"m:IsValidISBN13Response\"][\"m:IsValidISBN13Result\"];\r",
+									"        pm.expect(resultValue).to.eql(\"true\");\r",
+									"    });\r",
+									"\r",
+									"    // Test if response contains correct m namespace\r",
+									"    pm.test(\"Response contains correct m namespace\", function () {\r",
+									"        pm.expect(responseBody).to.match(/xmlns:m=\"http:\\/\\/webservices\\.daehosting\\.com\\/ISBN\"/);\r",
+									"    });\r",
+									"\r",
+									"    // Test if response contains closing soap:Envelope tag\r",
+									"    pm.test(\"Response contains closing soap:Envelope tag\", function () {\r",
+									"        pm.expect(responseBody).to.include(\"</soap:Envelope>\");\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <IsValidISBN13 xmlns=\"http://webservices.daehosting.com/ISBN\">\n      <sISBN>978-1-4612-9090-2</sISBN>\n    </IsValidISBN13>\n  </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "http://webservices.daehosting.com/services/isbnservice.wso",
+							"protocol": "http",
+							"host": [
+								"webservices",
+								"daehosting",
+								"com"
+							],
+							"path": [
+								"services",
+								"isbnservice.wso"
+							]
+						},
+						"description": "The test is done by calculation on the first 12 digits and compare the result with the checksum number at the end. You have to pass a 13 digits number."
+					},
+					"response": []
+				},
+				{
+					"name": "Is Valid ISBN10 Number",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseBody = pm.response.text();\r",
+									"var parseXml = require('xml2js').parseString;\r",
+									"\r",
+									"// Test if status code is 200\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Test if Content-Type header is correct\r",
+									"pm.test(\"Check that header is text/xml; charset=utf-8\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"text/xml; charset=utf-8\");\r",
+									"});\r",
+									"\r",
+									"// Test if XML declaration exists\r",
+									"pm.test(\"Check XML declaration\", function () {\r",
+									"    pm.expect(responseBody).to.match(/^<\\?xml version=\"1\\.0\" encoding=\"utf-8\"\\?>/);\r",
+									"});\r",
+									"\r",
+									"// Parse XML response\r",
+									"parseXml(responseBody, { ignoreAttrs: true, explicitArray: false }, function (err, result) {\r",
+									"    pm.expect(err).to.be.null;\r",
+									"\r",
+									"    // Test if SOAP envelope exists\r",
+									"    pm.test(\"SOAP envelope exists\", function () {\r",
+									"        pm.expect(result).to.have.property(\"soap:Envelope\");\r",
+									"    });\r",
+									"\r",
+									"    // Test if SOAP body exists\r",
+									"    pm.test(\"SOAP body exists\", function () {\r",
+									"        pm.expect(result[\"soap:Envelope\"]).to.have.property(\"soap:Body\");\r",
+									"    });\r",
+									"\r",
+									"    // Test if IsValidISBN10Response exists\r",
+									"    pm.test(\"m:IsValidISBN10Response exists\", function () {\r",
+									"        pm.expect(result[\"soap:Envelope\"][\"soap:Body\"]).to.have.property(\"m:IsValidISBN10Response\");\r",
+									"    });\r",
+									"\r",
+									"    // Test if IsValidISBN10Result exists\r",
+									"    pm.test(\"m:IsValidISBN10Result exists\", function () {\r",
+									"        pm.expect(result[\"soap:Envelope\"][\"soap:Body\"][\"m:IsValidISBN10Response\"]).to.have.property(\"m:IsValidISBN10Result\");\r",
+									"    });\r",
+									"\r",
+									"    // Test if IsValidISBN10Result equals \"true\"\r",
+									"    pm.test(\"m:IsValidISBN10Result equals 'true'\", function () {\r",
+									"        var resultValue = result[\"soap:Envelope\"][\"soap:Body\"][\"m:IsValidISBN10Response\"][\"m:IsValidISBN10Result\"];\r",
+									"        pm.expect(resultValue).to.eql(\"true\");\r",
+									"    });\r",
+									"\r",
+									"    // Test if response contains correct m namespace\r",
+									"    pm.test(\"Response contains correct m namespace\", function () {\r",
+									"        pm.expect(responseBody).to.match(/xmlns:m=\"http:\\/\\/webservices\\.daehosting\\.com\\/ISBN\"/);\r",
+									"    });\r",
+									"\r",
+									"    // Test if response contains closing soap:Envelope tag\r",
+									"    pm.test(\"Response contains closing soap:Envelope tag\", function () {\r",
+									"        pm.expect(responseBody).to.include(\"</soap:Envelope>\");\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <IsValidISBN10 xmlns=\"http://webservices.daehosting.com/ISBN\">\n      <sISBN>0-19-852663-6</sISBN>\n    </IsValidISBN10>\n  </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "http://webservices.daehosting.com/services/isbnservice.wso",
+							"protocol": "http",
+							"host": [
+								"webservices",
+								"daehosting",
+								"com"
+							],
+							"path": [
+								"services",
+								"isbnservice.wso"
+							]
+						},
+						"description": "The test is done by calculation on the first 9 digits and compare the result with the checksum number at the end. You have to pass a 10 digits number or 8 digits and an X."
+					},
+					"response": []
+				}
+			],
+			"description": "SOAP APIs for book ISBN numbers.",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Temperature",
+			"item": [
+				{
+					"name": "Celsius to Farenheit Conversion",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/soap+xml; charset=utf-8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n  <soap12:Body>\n    <CelsiusToFahrenheit xmlns=\"https://www.w3schools.com/xml/\">\n      <Celsius>20</Celsius>\n    </CelsiusToFahrenheit>\n  </soap12:Body>\n</soap12:Envelope>"
+						},
+						"url": {
+							"raw": "https://www.w3schools.com/xml/tempconvert.asmx",
+							"protocol": "https",
+							"host": [
+								"www",
+								"w3schools",
+								"com"
+							],
+							"path": [
+								"xml",
+								"tempconvert.asmx"
+							]
+						},
+						"description": "Converts celsius temperature to farenheit."
+					},
+					"response": []
+				},
+				{
+					"name": "Farenheit to Celsius Conversion",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/soap+xml; charset=utf-8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n  <soap12:Body>\n    <FahrenheitToCelsius xmlns=\"https://www.w3schools.com/xml/\">\n      <Fahrenheit>75</Fahrenheit>\n    </FahrenheitToCelsius>\n  </soap12:Body>\n</soap12:Envelope>"
+						},
+						"url": {
+							"raw": "https://www.w3schools.com/xml/tempconvert.asmx",
+							"protocol": "https",
+							"host": [
+								"www",
+								"w3schools",
+								"com"
+							],
+							"path": [
+								"xml",
+								"tempconvert.asmx"
+							]
+						},
+						"description": "Converts farenheit temperature to celsius."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
